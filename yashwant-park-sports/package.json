@@ -1,0 +1,21 @@
+{
+  "name": "yashwant-park-sports",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vonage/server-sdk": "^3.14.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.13",
+    "pdfkit": "^0.15.0",
+    "twilio": "^5.1.1"
+  }
+}
