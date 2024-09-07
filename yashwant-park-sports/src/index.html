@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yashwant Park Sports Association</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: "Poppins", sans-serif;
+            background: radial-gradient(circle, #ffa07a, #fa8072);
+            color: #fff;
+        }
+        h1 {
+            text-align: center;
+            font-size: 4rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 40px;
+        }
+        .slot-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px;
+            perspective: 1000px;
+        }
+        .slot {
+            border: 4px solid #fff;
+            width: 300px;
+            height: 400px;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        .vs-container {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .slot:hover {
+            transform: rotateY(10deg);
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #fff;
+            color: #fa8072;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: all 0.5s ease;
+        }
+        button:hover {
+            background-color: #fa8072;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        button:hover::before {
+            left: 100%;
+        }
+        .spinner {
+            width: 100px;
+            height: 100px;
+            border: 10px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Yashwant Park Sports Association</h1>
+    <div class="slot-container">
+        <div class="slot" id="slot1"></div>
+        <div class="vs-container">VS</div>
+        <div class="slot" id="slot2"></div>
+    </div>
+    <div class="button-container">
+        <button id="findCaptainBtn">Find Captain</button>
+    </div>
+
+    <script>
+        async function fetchCaptainsData() {
+            try {
+                const response = await fetch(
+                    `https://script.google.com/macros/s/AKfycbwgz9lKF8ewkrLf3p9_RQP1agJwkgIedLJp39CL4fBoWEpLzlFYbOXLSEPRV8401Rnq/exec`
+                );
+                const data = await response.json();
+                console.log("Captains data fetched:", data.data);
+                return data.data || [];
+            } catch (error) {
+                console.error("Error fetching captains data:", error);
+                return [];
+            }
+        }
+    
+        async function fetchPlayersData() {
+            try {
+                const response = await fetch(
+                    `https://script.google.com/macros/s/AKfycbz9XVqB3tejcEiGbvDmxGG9YHB1T0uf0-ZGcmasu9giBjxq2O9Vq9bZ0aN8oVbrXdqT/exec`
+                );
+                const data = await response.json();
+                console.log("Players data fetched:", data.data);
+                return data.data || [];
+            } catch (error) {
+                console.error("Error fetching players data:", error);
+                return [];
+            }
+        }
+    
+        function selectCaptains(users, players) {
+            if (users.length < 2) {
+                return { captain1: {}, captain2: {}, team1: [], team2: [] };
+            }
+    
+            const shuffled = [...users];
+    
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+    
+            const captain1 = shuffled.shift();
+            const captain2 = shuffled.shift();
+    
+            // Remove captains from the players list
+            const remainingPlayers = players.filter(player => player.Name !== captain1.Name && player.Name !== captain2.Name);
+            const shuffledPlayers = shuffleArray(remainingPlayers);
+    
+            const team1 = [captain1, ...shuffledPlayers.slice(0, Math.floor(shuffledPlayers.length / 2))];
+            const team2 = [captain2, ...shuffledPlayers.slice(Math.floor(shuffledPlayers.length / 2))];
+    
+            return { captain1, captain2, team1, team2 };
+        }
+    
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+    
+        async function findCaptain(event) {
+            try {
+                // Show spinners
+                document.getElementById("slot1").innerHTML =
+                    '<div class="spinner"></div>';
+                document.getElementById("slot2").innerHTML =
+                    '<div class="spinner"></div>';
+    
+                // Fetch data
+                const usersPromise = fetchCaptainsData();
+                const playersPromise = fetchPlayersData();
+    
+                // Wait for both promises to resolve
+                const [users, players] = await Promise.all([usersPromise, playersPromise]);
+                console.log("Users data:", users);
+                console.log("Players data:", players);
+    
+                // Select captains
+                const { captain1, captain2, team1, team2 } = selectCaptains(users, players);
+                console.log("Selected captains:", captain1, captain2);
+                console.log("Team 1:", team1);
+                console.log("Team 2:", team2);
+    
+                // Update UI with captains' images
+                const captain1ImgUrl = captain1.Images || "";
+                const captain2ImgUrl = captain2.Images || "";
+    
+                document.getElementById("slot1").innerHTML = captain1ImgUrl
+                    ? `<img src="${captain1ImgUrl}" alt="${captain1.Name}" style="max-width: 100%; max-height: 100%;">`
+                    : "No image available";
+    
+                document.getElementById("slot2").innerHTML = captain2ImgUrl
+                    ? `<img src="${captain2ImgUrl}" alt="${captain2.Name}" style="max-width: 100%; max-height: 100%;">`
+                    : "No image available";
+    
+                // Now send emails separately
+                await sendEmails(captain1, captain2, team1, team2);
+            } catch (error) {
+                console.error("Error finding captains:", error);
+                // Handle error - e.g., display error message in UI
+            }
+        }
+    
+        async function sendEmails(captain1, captain2, team1, team2) {
+            try {
+                const response = await fetch("http://localhost:3000/send-email", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        captain1: {
+                            name: captain1.Name,
+                            email: captain1.Email,
+                            team: team1,
+                        },
+                        captain2: {
+                            name: captain2.Name,
+                            email: captain2.Email,
+                            team: team2,
+                        },
+                    }),
+                });
+                const data = await response.json();
+                console.log("Email sent successfully:", data);
+            } catch (error) {
+                console.error("Error sending email:", error);
+                // Handle error - e.g., display error message in 
+            }
+        }
+    
+        // Event listener for the button
+        document.getElementById("findCaptainBtn").addEventListener("click", async (event) => {
+            try {
+                event.preventDefault(); // Prevent default form submission behavior
+    
+                // Call your async function here
+                await findCaptain();
+            } catch (error) {
+                console.error("Error finding captain:", errorr);
+                // Handle error - e.g., display error message in UI
+            }
+        });
+    </script>
+    
+</body>
+</html>
