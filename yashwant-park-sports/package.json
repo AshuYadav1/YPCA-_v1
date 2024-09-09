@@ -13,6 +13,7 @@
     "@vonage/server-sdk": "^3.14.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "nodemailer": "^6.9.13",
     "pdfkit": "^0.15.0",
