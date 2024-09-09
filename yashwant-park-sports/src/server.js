@@ -4,6 +4,7 @@ const nodemailer = require("nodemailer");
 const cors = require("cors");
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,15 +14,20 @@ app.get('/', (req, res) => {
   res.send('Welcome to the home page!');
 });
 
+
+
 app.use(bodyParser.json());
-app.use(cors());
+
+app.use(cors({
+  origin: 'https://yashwantpark.us.to',
+}));
 
 // Configure the email transporter using Gmail
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "mail.ashukumaryadav@gmail.com", // Replace with your Gmail email address
-    pass: "odtp lwnq swkn bqnj", // Replace with your Gmail password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
