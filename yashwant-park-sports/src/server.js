@@ -8,6 +8,11 @@ const PDFDocument = require("pdfkit");
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Add a simple route to test if the server works
+app.get('/', (req, res) => {
+  res.send('Welcome to the home page!');
+});
+
 app.use(bodyParser.json());
 app.use(cors());
 
